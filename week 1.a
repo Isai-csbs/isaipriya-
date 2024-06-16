@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int main() {
+    int age;
+
+    // Input age from the user
+    printf("Enter your age: ");
+    scanf("%d", &age);
+
+    // Check if age is greater than or equal to 18
+    if (age >= 18) {
+        printf("Congratulations! You are eligible for casting your vote in C language.\n");
+    } else {
+        printf("Sorry, you are not eligible to cast your vote yet.\n");
+    }
+
+    return 0;
+}
