@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a node in the binary tree
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Function prototypes
+struct TreeNode* createNode(int data);
+struct TreeNode* insert(struct TreeNode* root, int data);
+void inorderTraversal(struct TreeNode* root);
+void preorderTraversal(struct TreeNode* root);
+void postorderTraversal(struct TreeNode* root);
+void deleteTree(struct TreeNode* root);
+
+// Main function
+int main() {
+    struct TreeNode* root = NULL;
+
+    // Insert elements into the binary tree
+    root = insert(root, 10);
+    root = insert(root, 5);
+    root = insert(root, 15);
+    root = insert(root, 7);
+    root = insert(root, 12);
+    root = insert(root, 3);
+
+    // Perform inorder traversal
+    printf("Inorder Traversal: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    // Perform preorder traversal
+    printf("Preorder Traversal: ");
+    preorderTraversal(root);
+    printf("\n");
+
+    // Perform postorder traversal
+    printf("Postorder Traversal: ");
+    postorderTraversal(root);
+    printf("\n");
+
+    // Delete the binary tree to free memory
+    deleteTree(root);
+
+    return 0;
+}
+
+// Function to create a new node
+struct TreeNode* createNode(int data) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    if (newNode == NULL) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the binary tree
+struct TreeNode* insert(struct TreeNode* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else if (data > root->data) {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+// Function to perform inorder traversal of the binary tree
+void inorderTraversal(struct TreeNode* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+// Function to perform preorder traversal of the binary tree
+void preorderTraversal(struct TreeNode* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorderTraversal(root->left);
+        preorderTraversal(root->right);
+    }
+}
+
+// Function to perform postorder traversal of the binary tree
+void postorderTraversal(struct TreeNode* root) {
+    if (root != NULL) {
+        postorderTraversal(root->left);
+        postorderTraversal(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+// Function to delete the binary tree
+void deleteTree(struct TreeNode* root) {
+    if (root != NULL) {
+        deleteTree(root->left);
+        deleteTree(root->right);
+        free(root);
+    }
+}
