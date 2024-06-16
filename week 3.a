@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+// Define a union named Data
+union Data {
+    int intValue;
+    float floatValue;
+    char charValue;
+};
+
+int main() {
+    union Data data;
+
+    // Accept input values for the union members
+    printf("Enter an integer value: ");
+    scanf("%d", &data.intValue);
+
+    printf("Enter a float value: ");
+    scanf("%f", &data.floatValue);
+
+    printf("Enter a character value: ");
+    scanf(" %c", &data.charValue); // Note the space before %c to consume any leading whitespace
+
+    // Display values stored in the union
+    printf("\nValues stored in the union:\n");
+    printf("Integer value: %d\n", data.intValue);
+    printf("Float value: %.2f\n", data.floatValue);
+    printf("Character value: %c\n", data.charValue);
+
+    return 0;
+}
