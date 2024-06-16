@@ -1,0 +1,195 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a term in the polynomial
+struct Term {
+    int coefficient;
+    int exponent;
+    struct Term* next;
+};
+
+// Function prototypes
+void insertTerm(struct Term** poly, int coeff, int exp);
+void displayPolynomial(struct Term* poly, const char* polyName);
+struct Term* addPolynomials(struct Term* poly1, struct Term* poly2);
+struct Term* subtractPolynomials(struct Term* poly1, struct Term* poly2);
+struct Term* multiplyPolynomials(struct Term* poly1, struct Term* poly2);
+void deletePolynomial(struct Term** poly);
+
+// Main function
+int main() {
+    struct Term* poly1 = NULL;
+    struct Term* poly2 = NULL;
+    struct Term* polyAdd = NULL;
+    struct Term* polySub = NULL;
+    struct Term* polyMul = NULL;
+    
+    // Polynomial 1: 3x^2 + 4x^1 + 5x^0
+    insertTerm(&poly1, 3, 2);
+    insertTerm(&poly1, 4, 1);
+    insertTerm(&poly1, 5, 0);
+    
+    // Polynomial 2: 2x^3 + 3x^2 + 1x^1
+    insertTerm(&poly2, 2, 3);
+    insertTerm(&poly2, 3, 2);
+    insertTerm(&poly2, 1, 1);
+    
+    // Display polynomials
+    displayPolynomial(poly1, "Polynomial 1");
+    displayPolynomial(poly2, "Polynomial 2");
+    
+    // Addition of polynomials
+    polyAdd = addPolynomials(poly1, poly2);
+    displayPolynomial(polyAdd, "Polynomial Addition");
+    
+    // Subtraction of polynomials
+    polySub = subtractPolynomials(poly1, poly2);
+    displayPolynomial(polySub, "Polynomial Subtraction");
+    
+    // Multiplication of polynomials
+    polyMul = multiplyPolynomials(poly1, poly2);
+    displayPolynomial(polyMul, "Polynomial Multiplication");
+    
+    // Clean up memory
+    deletePolynomial(&poly1);
+    deletePolynomial(&poly2);
+    deletePolynomial(&polyAdd);
+    deletePolynomial(&polySub);
+    deletePolynomial(&polyMul);
+    
+    return 0;
+}
+
+// Function to insert a term into the polynomial
+void insertTerm(struct Term** poly, int coeff, int exp) {
+    struct Term* newTerm = (struct Term*)malloc(sizeof(struct Term));
+    if (newTerm == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    newTerm->coefficient = coeff;
+    newTerm->exponent = exp;
+    newTerm->next = NULL;
+    
+    if (*poly == NULL) {
+        *poly = newTerm;
+    } else {
+        struct Term* current = *poly;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newTerm;
+    }
+}
+
+// Function to display the polynomial
+void displayPolynomial(struct Term* poly, const char* polyName) {
+    if (poly == NULL) {
+        printf("%s: Empty\n", polyName);
+        return;
+    }
+    printf("%s: ", polyName);
+    while (poly != NULL) {
+        printf("%dx^%d ", poly->coefficient, poly->exponent);
+        if (poly->next != NULL) {
+            printf("+ ");
+        }
+        poly = poly->next;
+    }
+    printf("\n");
+}
+
+// Function to add two polynomials
+struct Term* addPolynomials(struct Term* poly1, struct Term* poly2) {
+    struct Term* result = NULL;
+    while (poly1 != NULL && poly2 != NULL) {
+        if (poly1->exponent > poly2->exponent) {
+            insertTerm(&result, poly1->coefficient, poly1->exponent);
+            poly1 = poly1->next;
+        } else if (poly1->exponent < poly2->exponent) {
+            insertTerm(&result, poly2->coefficient, poly2->exponent);
+            poly2 = poly2->next;
+        } else {
+            int sumCoeff = poly1->coefficient + poly2->coefficient;
+            insertTerm(&result, sumCoeff, poly1->exponent);
+            poly1 = poly1->next;
+            poly2 = poly2->next;
+        }
+    }
+    
+    // Adding remaining terms of poly1
+    while (poly1 != NULL) {
+        insertTerm(&result, poly1->coefficient, poly1->exponent);
+        poly1 = poly1->next;
+    }
+    
+    // Adding remaining terms of poly2
+    while (poly2 != NULL) {
+        insertTerm(&result, poly2->coefficient, poly2->exponent);
+        poly2 = poly2->next;
+    }
+    
+    return result;
+}
+
+// Function to subtract two polynomials
+struct Term* subtractPolynomials(struct Term* poly1, struct Term* poly2) {
+    struct Term* result = NULL;
+    while (poly1 != NULL && poly2 != NULL) {
+        if (poly1->exponent > poly2->exponent) {
+            insertTerm(&result, poly1->coefficient, poly1->exponent);
+            poly1 = poly1->next;
+        } else if (poly1->exponent < poly2->exponent) {
+            insertTerm(&result, -poly2->coefficient, poly2->exponent);
+            poly2 = poly2->next;
+        } else {
+            int diffCoeff = poly1->coefficient - poly2->coefficient;
+            insertTerm(&result, diffCoeff, poly1->exponent);
+            poly1 = poly1->next;
+            poly2 = poly2->next;
+        }
+    }
+    
+    // Adding remaining terms of poly1
+    while (poly1 != NULL) {
+        insertTerm(&result, poly1->coefficient, poly1->exponent);
+        poly1 = poly1->next;
+    }
+    
+    // Subtracting remaining terms of poly2
+    while (poly2 != NULL) {
+        insertTerm(&result, -poly2->coefficient, poly2->exponent);
+        poly2 = poly2->next;
+    }
+    
+    return result;
+}
+
+// Function to multiply two polynomials
+struct Term* multiplyPolynomials(struct Term* poly1, struct Term* poly2) {
+    struct Term* result = NULL;
+    struct Term* temp = NULL;
+    while (poly1 != NULL) {
+        temp = poly2;
+        while (temp != NULL) {
+            int coeff = poly1->coefficient * temp->coefficient;
+            int exp = poly1->exponent + temp->exponent;
+            insertTerm(&result, coeff, exp);
+            temp = temp->next;
+        }
+        poly1 = poly1->next;
+    }
+    return result;
+}
+
+// Function to delete a polynomial
+void deletePolynomial(struct Term** poly) {
+    struct Term* current = *poly;
+    struct Term* next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    *poly = NULL;
+}
