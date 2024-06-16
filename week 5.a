@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h> // for isdigit
+#include <stdbool.h> // for boolean type
+
+#define MAX_SIZE 100
+
+// Stack structure
+struct Stack {
+    int top;
+    int items[MAX_SIZE];
+};
+
+// Initialize stack
+void initStack(struct Stack *stack) {
+    stack->top = -1;
+}
+
+// Function to check if stack is full
+bool isFull(struct Stack *stack) {
+    return stack->top == MAX_SIZE - 1;
+}
+
+// Function to check if stack is empty
+bool isEmpty(struct Stack *stack) {
+    return stack->top == -1;
+}
+
+// Function to push element onto stack
+void push(struct Stack *stack, int value) {
+    if (isFull(stack)) {
+        printf("Stack Overflow\n");
+        exit(EXIT_FAILURE);
+    }
+    stack->items[++stack->top] = value;
+}
+
+// Function to pop element from stack
+int pop(struct Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack Underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    return stack->items[stack->top--];
+}
+
+// Function to evaluate postfix expression
+int evaluatePostfix(char postfix[]) {
+    struct Stack stack;
+    initStack(&stack);
+
+    int i = 0;
+    while (postfix[i] != '\0') {
+        if (isdigit(postfix[i])) {
+            push(&stack, postfix[i] - '0'); // Convert char to int
+        } else {
+            int operand2 = pop(&stack);
+            int operand1 = pop(&stack);
+            switch (postfix[i]) {
+                case '+':
+                    push(&stack, operand1 + operand2);
+  
